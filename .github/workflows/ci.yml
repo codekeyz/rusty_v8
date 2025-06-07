@@ -48,9 +48,8 @@ jobs:
     
     env:
       V8_FROM_SOURCE: true
-      CARGO_VARIANT_FLAG: ${{ matrix.config.variant == 'release' && '--release' || '' }}
-      CARGO_FEATURE_FLAGS: ${{ matrix.config.v8_enable_pointer_compression && '--features v8_enable_pointer_compression' || '' }}
-      LIB_NAME: ${{ contains(matrix.config.target, 'windows') && 'rusty_v8' || 'librusty_v8' }}
-      LIB_EXT: ${{ contains(matrix.config.target, 'windows') && 'lib' || 'a' }}
-      FEATURES_SUFFIX: ${{ matrix.config.v8_enable_pointer_compression && '_ptrcomp' || '' }}
+      CARGO_FEATURE_FLAGS: '--features v8_enable_pointer_compression'
+      LIB_NAME: ${{ contains(matrix.platform.os-name, 'windows') && 'rusty_v8' || 'librusty_v8' }}
+      LIB_EXT: ${{ contains(matrix.platform.os-name, 'windows') && 'lib' || 'a' }}
+      FEATURES_SUFFIX: '_ptrcomp'
       RUSTFLAGS: -D warnings
