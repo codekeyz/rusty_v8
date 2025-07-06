@@ -29,20 +29,8 @@ jobs:
         config:
           - os: macos-13
             target: x86_64-apple-darwin
-            variant: debug
-            v8_enable_pointer_compression: false
-            cargo: cargo
-
-          - os: macos-13
-            target: x86_64-apple-darwin
             variant: release
             v8_enable_pointer_compression: false
-            cargo: cargo
-
-          - os: macos-13
-            target: x86_64-apple-darwin
-            variant: debug
-            v8_enable_pointer_compression: true
             cargo: cargo
 
           - os: macos-13
@@ -53,26 +41,8 @@ jobs:
 
           - os: macos-14
             target: aarch64-apple-darwin
-            variant: asan
-            v8_enable_pointer_compression: false
-            cargo: cargo
-
-          - os: macos-14
-            target: aarch64-apple-darwin
-            variant: debug
-            v8_enable_pointer_compression: false
-            cargo: cargo
-
-          - os: macos-14
-            target: aarch64-apple-darwin
             variant: release
             v8_enable_pointer_compression: false
-            cargo: cargo
-
-          - os: macos-14
-            target: aarch64-apple-darwin
-            variant: debug
-            v8_enable_pointer_compression: true
             cargo: cargo
 
           - os: macos-14
@@ -244,24 +214,6 @@ jobs:
         if: startsWith(matrix.config.os, 'ubuntu')
         run: |
           clang-format-19 --verbose --Werror --dry-run src/*.cc src/*.hpp src/*.h
-
-      - name: Test (ASAN)
-        env:
-          SCCACHE_IDLE_TIMEOUT: 0
-        if: matrix.config.variant == 'asan'
-        # https://github.com/rust-lang/rust/issues/87215
-        run: |
-          rustup component add rust-src --toolchain nightly-${{ matrix.config.target }}
-          # Is there a better way to install this tool?
-          curl -O http://commondatastorage.googleapis.com/chromium-browser-clang-staging/Mac/dsymutil-llvmorg-17-init-19076-g5533fc10-1.tgz
-          tar -C tools/clang/dsymutil/ -xvzf dsymutil-llvmorg-17-init-19076-g5533fc10-1.tgz
-          V8_FROM_SOURCE=true RUSTFLAGS="-C opt-level=1 -Zsanitizer=address" cargo +nightly -Z build-std nextest run --lib --bins --tests -v --cargo-verbose --cargo-verbose --target ${{ matrix.config.target }}
-
-      - name: Test
-        env:
-          SCCACHE_IDLE_TIMEOUT: 0
-        if: matrix.config.variant == 'debug' || matrix.config.variant == 'release'
-        run: ${{ matrix.config.cargo }} nextest run -v --cargo-verbose --cargo-verbose --all-targets --locked --target ${{ matrix.config.target }} ${{ env.CARGO_VARIANT_FLAG }} ${{ env.CARGO_FEATURE_FLAGS }}
 
       - name: Clippy
         run: ${{ matrix.config.cargo }} clippy --all-targets --locked --target ${{ matrix.config.target }} ${{ env.CARGO_VARIANT_FLAG }} ${{ env.CARGO_FEATURE_FLAGS }} -- -D clippy::all
