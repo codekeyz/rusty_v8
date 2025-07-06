@@ -63,11 +63,11 @@ jobs:
             v8_enable_pointer_compression: true
             cargo: cargo
 
-          - os: ubuntu-22.04
-            target: aarch64-linux-android
-            variant: release
-            v8_enable_pointer_compression: false
-            cargo: cargo    
+          # - os: ubuntu-22.04
+          #   target: aarch64-linux-android
+          #   variant: release
+          #   v8_enable_pointer_compression: false
+          #   cargo: cargo    
 
           - os: ${{ github.repository == 'denoland/rusty_v8' && 'windows-2022-xxl' || 'windows-2022' }}
             target: x86_64-pc-windows-msvc
